@@ -46,7 +46,3 @@ help:
 	-@echo   shared  Create a shared library
 	-@echo   clean   Delete all generated files
 	-@echo   help    Show this help
-	-@echo WIN = "$(HOST_WINDOWS)"  OS = "$(OS)" $(filter "Windows","$(OS)")
-	-@echo $(DIRS_ALL)
-	-@echo $(DIRS_SHARED)
-	-@echo $(DIRS_STATIC)

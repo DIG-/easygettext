@@ -13,10 +13,21 @@ WINDRES=windres
 override CC:=$(PREFIX)$(CC)
 override CXX:=$(PREFIX)$(CXX)
 override LD:=$(PREFIX)$(LD)
+
+DIR_SRC = src
+DIR_OBJ = obj
+DIR_BIN = bin
+DIR_LIB = lib
+DIR_HDR = hdr
+DIR_RES = res
+DIR_STATIC = static
+DIR_SHARED = shared
+
 override WINDRES:=$(PREFIX)$(WINDRES)
-override CCFLAGS+= -Wall
+override CCFLAGS+= -Wall -Iinclude -I$(DIR_HDR) -D_EASY_GETTEXT_COMPILE_TIME_
 override CXXFLAGS+= -Wall -std=c++11
 LDFLAGS = -Wall 
+
 ifneq ($(MAKECMDGOALS),debug)
 override LDFLAGS+=
 override CCFLAGS+=
@@ -27,14 +38,8 @@ override CCFLAGS+= -g
 override CXXFLAGS+= -g 
 endif
 
-DIR_SRC = src
-DIR_OBJ = obj
-DIR_BIN = bin
-DIR_LIB = lib
-DIR_HDR = hdr
-DIR_RES = res
-DIR_STATIC = static
-DIR_SHARED = shared
+# Don't edit before this line
+# ---------------------------
 
 ifeq (linux,$(findstring linux,$(shell $(CC) -dumpmachine)))
   TGT_WIN=0
@@ -135,12 +140,12 @@ PJ_LIB_STATIC_WPATH = $(DIR_LIB_STATIC)/lib$(PROJECT_NAME).a
 ifeq ($(TGT_WIN),0)
   PJ_EXE_WPATH = $(DIR_BIN)/$(PROJECT_NAME)
   PJ_LIB_SHARED_WPATH = $(DIR_LIB_SHARED)/lib$(PROJECT_NAME).so
-  CCFLAGS_SHARED = $(CCFLAGS) -Iinclude -fpic -D_EASY_GETTEXT_COMPILE_TIME_
+  CCFLAGS_SHARED = $(CCFLAGS) -fpic
   LDFLAGS_SHARED = $(LDFLAGS) -shared
 else
   PJ_EXE_WPATH = $(DIR_BIN)/$(PROJECT_NAME).exe
   PJ_LIB_SHARED_WPATH = $(DIR_LIB_SHARED)/$(PROJECT_NAME).dll
-  CCFLAGS_SHARED = $(CCFLAGS) -Iinclude -D_EASY_GETTEXT_COMPILE_TIME_
+  CCFLAGS_SHARED = $(CCFLAGS)
   LDFLAGS_SHARED = $(LDFLAGS) -shared -Wl,--out-implib,$(DIR_LIB_SHARED)/lib$(PROJECT_NAME).a
 endif
 
@@ -151,7 +156,7 @@ DIRS_STATIC = $(call EXCLUDE_EQUALS_PATH, $(PJ_OBJ_STATIC_WPATH) $(PJ_LIB_STATIC
 
 DIRS_ALL=$(call EXCLUDE_EQUALS_PATH, $(addsuffix /.dummy,$(DIRS_SHARED) $(DIRS_STATIC)))
 
-CCFLAGS_STATIC = $(CCFLAGS) -Iinclude -DEASY_GETTEXT_STATIC
-CXXFLAGS_STATIC = $(CXXFLAGS) -Iinclude
+CCFLAGS_STATIC = $(CCFLAGS)
+CXXFLAGS_STATIC = $(CXXFLAGS)
 
 LDFLAGS_STATIC =rcs
