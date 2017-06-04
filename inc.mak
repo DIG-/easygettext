@@ -43,16 +43,6 @@ else
   ifeq (mingw,$(findstring mingw,$(shell $(CC) -dumpmachine)))
     TGT_WIN=1
     LIB_OS=
-    INC_NOWIDE=-I3rdparty/nowide
-    LIB_NOWIDE=
-    INC_CXXOPTS=-I3rdparty/cxxopts/include
-    LIB_CXXOPTS=
-    INC_OPENCV=-I../../lib/opencv/build/include
-    LIB_OPENCV=-L../../lib/opencv/build/lib -lopencv_features2d320 -lopencv_core320 -lopencv_imgcodecs320 -lopencv_flann320
-    INC_LZMA=-I../../lib/lzma1604/C
-    LIB_LZMA=-L../../lib/lzma1604/bin -llzma
-    INC_DIG_IMAGE_FORMAT=-I./include
-    LIB_DIG_IMAGE_FORMAT=-L./lib/shared -ldig-image-format
   endif
 endif
 
@@ -60,9 +50,9 @@ ifeq (,$WIN)
 $(error Unable to define target. Manually set TGT_WIN=0 or TGT_WIN=1)
 endif
 
-override CCFLAGS+=$(INC_NOWIDE)
-override CXXFLAGS+=$(INC_NOWIDE)
-override LDFLAGS+=$(LIB_NOWIDE)
+override CCFLAGS+=
+override CXXFLAGS+=
+override LDFLAGS+=
 
 ifeq ($(OS),Windows_NT)
   L_WIN=1
@@ -96,12 +86,12 @@ PJ_LIB_STATIC_WPATH = $(DIR_LIB_STATIC)/lib$(PROJECT_NAME).a
 ifeq ($(TGT_WIN),0)
   PJ_EXE_WPATH = $(DIR_BIN)/$(PROJECT_NAME)
   PJ_LIB_SHARED_WPATH = $(DIR_LIB_SHARED)/lib$(PROJECT_NAME).so
-  CCFLAGS_SHARED = $(CCFLAGS) -Iinclude -fpic
+  CCFLAGS_SHARED = $(CCFLAGS) -Iinclude -fpic -D_EASY_GETTEXT_COMPILE_TIME_
   LDFLAGS_SHARED = $(LDFLAGS) -shared
 else
   PJ_EXE_WPATH = $(DIR_BIN)/$(PROJECT_NAME).exe
   PJ_LIB_SHARED_WPATH = $(DIR_LIB_SHARED)/$(PROJECT_NAME).dll
-  CCFLAGS_SHARED = $(CCFLAGS) -Iinclude
+  CCFLAGS_SHARED = $(CCFLAGS) -Iinclude -D_EASY_GETTEXT_COMPILE_TIME_
   LDFLAGS_SHARED = $(LDFLAGS) -shared -Wl,--out-implib,$(DIR_LIB_SHARED)/lib$(PROJECT_NAME).a
 endif
 
@@ -109,7 +99,7 @@ DIRS = $(abspath $(dir $(PJ_OBJ_WPATH))) $(DIR_BIN)
 DIRS_SHARED = $(DIR_OBJ_SHARED) $(DIR_LIB_SHARED)
 DIRS_STATIC = $(DIR_OBJ_STATIC) $(DIR_LIB_STATIC)
 
-CCFLAGS_STATIC = $(CCFLAGS) -Iinclude
+CCFLAGS_STATIC = $(CCFLAGS) -Iinclude -DEASY_GETTEXT_STATIC
 CXXFLAGS_STATIC = $(CXXFLAGS) -Iinclude
 
 LDFLAGS_STATIC =rcs

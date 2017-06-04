@@ -55,12 +55,12 @@ int EasyGettext_load(EasyGettext* a,const char* locale,const char* path){
   return 0;
 }
 
-int EasyGettext_init(EasyGettext* a,const char* locale,const char* path){
+_EAG_PUB_ int EasyGettext_init(EasyGettext* a,const char* locale,const char* path){
   a->content = NULL;
   return EasyGettext_load(a,locale,path);
 }
 
-int EasyGettext_free(EasyGettext* a){
+_EAG_PUB_ int EasyGettext_free(EasyGettext* a){
   if(a->content != NULL){
     free(a->content);
     a->content = NULL;
@@ -68,18 +68,18 @@ int EasyGettext_free(EasyGettext* a){
   return 0;
 }
 
-int EasyGettext_setlocale(EasyGettext* a,const char* locale,const char* path){
+_EAG_PUB_ int EasyGettext_setlocale(EasyGettext* a,const char* locale,const char* path){
   return EasyGettext_load(a,locale,path);
 }
 
-const char* EasyGettext_gettext(EasyGettext* a,const char* str){
+_EAG_PUB_ const char* EasyGettext_gettext(EasyGettext* a,const char* str){
   if(a->content == NULL){
     return str;
   }
   return NULL;
 }
 
-const char* EasyGettext_ngettext(EasyGettext* a,const char* str,const char* str2,const uint64_t n){
+_EAG_PUB_ const char* EasyGettext_ngettext(EasyGettext* a,const char* str,const char* str2,const uint64_t n){
   if(a->content == NULL){
     return str;
   }
