@@ -76,15 +76,15 @@ else
 endif
 
 help:
-	@echo         =========== Easy Gettext ===========
-	@echo.
-	@echo Make:
-	@echo   all     Create static and shared library (default)
-	@echo   static  Create a static library
-	@echo   shared  Create a shared library
-	@echo   clean   Delete all generated files
-	@echo   help    Show this help
-	@echo WIN = "$(WIN)"
-	@echo $(DIRS)
-	@echo $(DIRS_SHARED)
-	@echo $(DIRS_STATIC)
+	-@echo         =========== Easy Gettext ===========
+	-@echo.
+	-@echo Make:
+	-@echo   all     Create static and shared library (default)
+	-@echo   static  Create a static library
+	-@echo   shared  Create a shared library
+	-@echo   clean   Delete all generated files
+	-@echo   help    Show this help
+	-@echo WIN = "$(WIN)"
+	-@echo $(DIRS)
+	-@echo $(DIRS_SHARED)
+	-@echo $(DIRS_STATIC)
