@@ -1,6 +1,6 @@
 # DIG Makefile modulus
 #
-# Version:      1.09
+# Version:      1.10
 # Date:         2017-06-04
 #
 # Defaults values to makefile
@@ -79,7 +79,7 @@ $(1): $(5) $(2);
 	-@echo "$(COLOR_BLUE)Library$(COLOR_GREEN)    $(1)$(COLOR_RED)"
 	-@$(RM) $(1)
 	-@$(3) $(4) -o $(1) $(2)
-	@if [ -f $(1) ]\; then echo "$(COLOR_GREEN)           Successfully$(COLOR_DEF)"\; else echo "Linking    ERROR$(COLOR_DEF)"\; return 1\; fi\;
+	@if [ -f $(1) ]; then echo "$(COLOR_GREEN)           Successfully$(COLOR_DEF)"; else echo "Linking    ERROR$(COLOR_DEF)"; return 1; fi
 endef
 else
 define LINK_RULE
@@ -97,7 +97,7 @@ $(1)/%.o: $(2)/%.c;
 	-@echo "$(COLOR_BLUE)Compile$(COLOR_GREEN)    $$@$(COLOR_RED)"
 	-@$(RM) $$@
 	-@$(CC) $(3) -c $$< -o $$@
-	@if [ -f $$@ ]\; then return 0\; else echo "Compile    ERROR$(COLOR_DEF)"\; return 1\; fi\;
+	@if [ -f $$@ ]; then return 0; else echo "Compile    ERROR$(COLOR_DEF)"; return 1; fi
 endef
 else
 define COMPILE_RULE
