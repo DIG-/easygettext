@@ -31,9 +31,9 @@ endif
 
 $(DIRS) $(DIRS_SHARED) $(DIRS_STATIC):
 ifeq ($(WIN),0)
-	-@mkdir $@
+	@mkdir $@
 else
-	-@mkdir $(subst /,\\,$@)
+	@mkdir $(subst /,\,$@)
 endif
 
 $(DIR_OBJ_STATIC)/%.o: $(DIR_SRC)/%.c
@@ -84,3 +84,7 @@ help:
 	@echo   shared  Create a shared library
 	@echo   clean   Delete all generated files
 	@echo   help    Show this help
+	@echo WIN = "$(WIN)"
+	@echo $(DIRS)
+	@echo $(DIRS_SHARED)
+	@echo $(DIRS_STATIC)
