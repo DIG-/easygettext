@@ -33,13 +33,14 @@
 extern "C" {
 #endif
 
+_EAG_PUB_ extern char* EasyGettext_version;
 _EAG_PUB_ extern EasyGettext EasyGettext_default;
 
 _EAG_PUB_ int   EasyGettext_init(EasyGettext*,const char* locale,const char* path);
 _EAG_PUB_ int   EasyGettext_free(EasyGettext*);
 _EAG_PUB_ int   EasyGettext_setlocale(EasyGettext*,const char* locale,const char* path);
 _EAG_PUB_ const char* EasyGettext_gettext(EasyGettext*,const char*);
-_EAG_PUB_ const char* EasyGettext_ngettext(EasyGettext*,const char*,const char*,const uint64_t);
+_EAG_PUB_ const char* EasyGettext_ngettext(EasyGettext*,const char*,const char*,const uint32_t);
 
 static const int EasyGettext_OK = 0;
 static const int EasyGettext_MALLOC_FAILED = -1;

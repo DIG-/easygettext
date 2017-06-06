@@ -3,10 +3,14 @@
 #include <string.h>
 #include "easy-gettext-struct-internal.h"
 #include "easy-gettext.h"
+#include "easy-plural.h"
+#include "version.h"
 
-#ifdef DEBUG
-#include <inttypes.h>
-#else 
+#ifdef DEBUG_MODE
+  #include <inttypes.h>
+  #define DBG(msg,...) printf("EG: "msg, ##__VA_ARGS__)
+#else
+  #define DBG(...) 
 #endif
 
 /**
@@ -27,6 +31,7 @@
 #define TYPE_HASH 1
 
 EasyGettext EasyGettext_default;
+char* EasyGettext_version = EASY_GETTEXT_VERSION;
 
 uint32_t ChangeEndianess(const uint32_t a){
   return ((a&0xff)<<24)|((a&0xff00)<<8)|((a&0xff0000)>>8)|((a&0xff000000)>>24);
@@ -127,6 +132,8 @@ int EasyGettext_load(EasyGettext* a,const char* locale,const char* path){
     }
   }
   
+  /*int e = */EasyGettext_parsePlural(a,locale);
+  
   // TODO: Other type for search process
   a->type = TYPE_SORT;
   a->polymorph = NULL;
@@ -137,6 +144,7 @@ int EasyGettext_load(EasyGettext* a,const char* locale,const char* path){
 int EasyGettext_init(EasyGettext* a,const char* locale,const char* path){
   a->content = NULL;
   a->polymorph = NULL;
+  a->plural = NULL;
   return EasyGettext_load(a,locale,path);
 }
 
@@ -153,6 +161,7 @@ int EasyGettext_free(EasyGettext* a){
 }
 
 int EasyGettext_setlocale(EasyGettext* a,const char* locale,const char* path){
+  EasyGettext_free(a);
   return EasyGettext_load(a,locale,path);
 }
 
@@ -180,9 +189,9 @@ const char* EasyGettext_gettext(EasyGettext* a,const char* str){
         l = p+1;
       }else{
         // Assuming  AA < AAA < AAB < AABC < AAC
-        if(len > a->string[p].length){
+        if(len > strlen(&(a->content[a->string[p].offset]))){
           r = p-1;
-        }else if(len < a->string[p].length){
+        }else if(len < strlen(&(a->content[a->string[p].offset]))){
           l = p+1;
         }else{
           return &(a->content[a->translation[p].offset]);
@@ -194,13 +203,19 @@ const char* EasyGettext_gettext(EasyGettext* a,const char* str){
   return str;
 }
 
-const char* EasyGettext_ngettext(EasyGettext* a,const char* str,const char* str2,const uint64_t n){
+const char* EasyGettext_ngettext(EasyGettext* a,const char* str,const char* str2,const uint32_t n){
   char* base = (char*)EasyGettext_gettext(a,str);
   if((base == str)||(base == NULL)){
     return str2;
   }
   
-  // TODO: Find plural form for N
+  int i = EasyGettext_evalPlural(a,n);
+  while(i-- > 0){
+    while(*base != '\0'){
+      base++;
+    }
+    base++;
+  }
   
   return base;
 }

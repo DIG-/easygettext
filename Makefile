@@ -1,6 +1,6 @@
 PROJECT_NAME=easy-gettext
-PROJECT_SRC =easy-gettext.c
-PROJECT_EXAMPLE=example.c easy-plural.c
+PROJECT_SRC =easy-gettext.c easy-plural.c
+PROJECT_EXAMPLE=example.c
 
 -include inc.mak
 
@@ -8,7 +8,7 @@ PROJECT_EXAMPLE=example.c easy-plural.c
 all: shared static
 static: $(PJ_LIB_STATIC_WPATH)
 shared: $(PJ_LIB_SHARED_WPATH)
-example: $(PJ_EXAMPLE_WPATH)
+example: static $(PJ_EXAMPLE_WPATH)
 
 $(DIRS_ALL):
 ifeq ($(HOST_WINDOWS),0)

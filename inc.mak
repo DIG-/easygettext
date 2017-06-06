@@ -30,8 +30,8 @@ LDFLAGS = -Wall
 
 ifneq ($(MAKECMDGOALS),debug)
 override LDFLAGS+=
-override CCFLAGS+=
-override CXXFLAGS+=
+override CCFLAGS+=-O3
+override CXXFLAGS+=-O3
 else
 override LDFLAGS+= -g 
 override CCFLAGS+= -g 
@@ -90,7 +90,7 @@ else
 define LINK_RULE
 $(1): $(5) $(2);
 	-@echo Library    $(1)
-	$(3) -o $(1) $(2) $(4)
+	@$(3) -o $(1) $(2) $(4)
 	-@echo            Successfully
 endef
 endif
@@ -108,7 +108,7 @@ else
 define LINK_STATIC_RULE
 $(1): $(5) $(2);
 	-@echo Library    $(1)
-	$(3) $(4) -o $(1) $(2)
+	@$(3) $(4) -o $(1) $(2)
 	-@echo            Successfully
 endef
 endif

@@ -31,7 +31,7 @@ msgstr "Olá, eu sou %s.\nPrazer em conhecê-lo.\n"
 #: \cpp\tests\easy-gettext\src\example.c:31
 #, c-format
 msgid "I present you the file \"%s\" with some examples.\n"
-msgstr "Apresento-lhe o arquivo \"%s\" com alguns exemplo.\n"
+msgstr "Apresento-lhe o arquivo \"%s\" com alguns exemplos.\n"
 
 #: \cpp\tests\easy-gettext\src\example.c:32
 #, c-format
