@@ -33,6 +33,6 @@ int main(int argc,char** argv){
   printf(gettext("With this example you will be able to understand how to use gettext\nand how to use this library.\n"));
   printf(ngettext("This file has %d line.","This file has %d lines.", CODE_LINES),CODE_LINES);
   
-  EG_free();
+  EG_clean();
   return 0;
 }

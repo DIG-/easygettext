@@ -33,6 +33,14 @@
 EasyGettext EasyGettext_default;
 char* EasyGettext_version = EASY_GETTEXT_VERSION;
 
+EasyGettext* EasyGettext_create(){
+  return malloc(sizeof(EasyGettext));
+}
+
+void EasyGettext_free(EasyGettext* a){
+  free(a);
+}
+
 uint32_t ChangeEndianess(const uint32_t a){
   return ((a&0xff)<<24)|((a&0xff00)<<8)|((a&0xff0000)>>8)|((a&0xff000000)>>24);
 }
@@ -149,7 +157,7 @@ int EasyGettext_init(EasyGettext* a,const char* locale,const char* path){
   return EasyGettext_load(a,locale,path);
 }
 
-int EasyGettext_free(EasyGettext* a){
+int EasyGettext_clean(EasyGettext* a){
   if(a->content != NULL){
     free(a->content);
     a->content = NULL;
@@ -162,7 +170,7 @@ int EasyGettext_free(EasyGettext* a){
 }
 
 int EasyGettext_setlocale(EasyGettext* a,const char* locale,const char* path){
-  EasyGettext_free(a);
+  EasyGettext_clean(a);
   return EasyGettext_load(a,locale,path);
 }
 

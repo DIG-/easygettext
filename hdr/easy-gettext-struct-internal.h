@@ -1,6 +1,10 @@
 #ifndef _EASY_GETTEXT_STRUCT_
 #define _EASY_GETTEXT_STRUCT_ 1
 
+#ifndef _EASY_GETTEXT_COMPILE_TIME_
+#error Does not include this file directly.
+#endif
+
 #include <stdint.h>
 
 typedef struct EGP_Node {

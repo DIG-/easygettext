@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "easy-gettext-struct-internal.h"
 #include "easy-plural.h"
 #include "easy-gettext.h"
 
