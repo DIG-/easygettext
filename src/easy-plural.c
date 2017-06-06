@@ -406,7 +406,8 @@ int EasyGettext_parsePlural(EasyGettext* a,const char* locale){
   }
   memset(tmp,0,1+plu-str);
   DBG("Copy plural into new string.\n");
-  for(int i=0;str<plu;str++){
+  int i = 0;
+  for(;str<plu;str++){
     if((*str == ' ')||(*str == '\\')||(*str == '\n')||(*str == '\r'))
       continue;
     if(*str == ';')

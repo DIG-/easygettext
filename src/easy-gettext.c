@@ -123,7 +123,8 @@ int EasyGettext_load(EasyGettext* a,const char* locale,const char* path){
     }
     a->translation = (EasyGettextLO*)&(a->content[offset]);
     if(change_endianess){
-      for(uint64_t i=0;i<a->number_strings;i++){
+      uint32_t i=0;
+      for(;i<a->number_strings;i++){
         a->string[i].length = ChangeEndianess(a->string[i].length);
         a->string[i].offset = ChangeEndianess(a->string[i].offset);
         a->translation[i].length = ChangeEndianess(a->translation[i].length);
