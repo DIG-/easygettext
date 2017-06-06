@@ -83,14 +83,32 @@ define LINK_RULE
 $(1): $(5) $(2);
 	-@echo "$(COLOR_BLUE)Library$(COLOR_GREEN)    $(1)$(COLOR_RED)"
 	-@$(RM) $(1)
-	-@$(3) $(4) -o $(1) $(2)
+	-@$(3) -o $(1) $(2) $(4)
 	@if [ -f $(1) ]; then echo "$(COLOR_GREEN)           Successfully$(COLOR_DEF)"; else echo "Linking    ERROR$(COLOR_DEF)"; return 1; fi
 endef
 else
 define LINK_RULE
 $(1): $(5) $(2);
 	-@echo Library    $(1)
-	@$(3) $(4) -o $(1) $(2)
+	$(3) -o $(1) $(2) $(4)
+	-@echo            Successfully
+endef
+endif
+
+# LINK_STATIC_RULE(target,source,linker,flags,dirs)
+ifeq ($(HOST_WINDOWS),0)
+define LINK_STATIC_RULE
+$(1): $(5) $(2);
+	-@echo "$(COLOR_BLUE)Library$(COLOR_GREEN)    $(1)$(COLOR_RED)"
+	-@$(RM) $(1)
+	-@$(3) $(4) -o $(1) $(2)
+	@if [ -f $(1) ]; then echo "$(COLOR_GREEN)           Successfully$(COLOR_DEF)"; else echo "Linking    ERROR$(COLOR_DEF)"; return 1; fi
+endef
+else
+define LINK_STATIC_RULE
+$(1): $(5) $(2);
+	-@echo Library    $(1)
+	$(3) $(4) -o $(1) $(2)
 	-@echo            Successfully
 endef
 endif
@@ -126,6 +144,7 @@ endif
 
 DIR_OBJ_STATIC = $(DIR_OBJ)/$(DIR_STATIC)/$(TGT_BIT)
 DIR_OBJ_SHARED = $(DIR_OBJ)/$(DIR_SHARED)/$(TGT_BIT)
+DIR_OBJ_EXAMPLE= $(DIR_OBJ)/example/$(TGT_BIT)
 DIR_LIB_STATIC = $(DIR_LIB)/$(DIR_STATIC)/$(TGT_BIT)
 DIR_LIB_SHARED = $(DIR_LIB)/$(DIR_SHARED)/$(TGT_BIT)
 
@@ -136,27 +155,37 @@ ifeq ($(TGT_WIN),1)
 endif
 PJ_OBJ_STATIC_WPATH = $(addprefix $(DIR_OBJ_STATIC)/,$(PJ_OBJS))
 PJ_OBJ_SHARED_WPATH = $(addprefix $(DIR_OBJ_SHARED)/,$(PJ_OBJS))
+PJ_OBJ_EXAMPLE_WPATH = $(addprefix $(DIR_OBJ_EXAMPLE)/,$(patsubst %.cpp,%.opp,$(patsubst %.c,%.o,$(PROJECT_EXAMPLE))))
 PJ_LIB_STATIC_WPATH = $(DIR_LIB_STATIC)/lib$(PROJECT_NAME).a
 ifeq ($(TGT_WIN),0)
   PJ_EXE_WPATH = $(DIR_BIN)/$(PROJECT_NAME)
+  PJ_EXAMPLE_WPATH = $(DIR_BIN)/example
   PJ_LIB_SHARED_WPATH = $(DIR_LIB_SHARED)/lib$(PROJECT_NAME).so
-  CCFLAGS_SHARED = $(CCFLAGS) -fpic
-  LDFLAGS_SHARED = $(LDFLAGS) -shared
+  CCFLAGS_SHARED  = $(CCFLAGS) -fpic
+  CXXFLAGS_SHARED = $(CXXFLAGS) -fpic
+  LDFLAGS_SHARED  = $(LDFLAGS) -shared
 else
   PJ_EXE_WPATH = $(DIR_BIN)/$(PROJECT_NAME).exe
+  PJ_EXAMPLE_WPATH = $(DIR_BIN)/example.exe
   PJ_LIB_SHARED_WPATH = $(DIR_LIB_SHARED)/$(PROJECT_NAME).dll
-  CCFLAGS_SHARED = $(CCFLAGS)
-  LDFLAGS_SHARED = $(LDFLAGS) -shared -Wl,--out-implib,$(DIR_LIB_SHARED)/lib$(PROJECT_NAME).a
+  CCFLAGS_SHARED  = $(CCFLAGS)
+  CXXFLAGS_SHARED = $(CXXFLAGS)
+  LDFLAGS_SHARED  = $(LDFLAGS) -shared -Wl,--output-def,$(DIR_LIB_SHARED)/lib$(PROJECT_NAME).def
 endif
+CCFLAGS_STATIC  = $(CCFLAGS) -DEASY_GETTEXT_STATIC
+CXXFLAGS_STATIC = $(CXXFLAGS) -DEASY_GETTEXT_STATIC
+LDFLAGS_STATIC  =rcs
+
+CCFLAGS_EXAMPLE  = -Wall -Iinclude -Ihdr
+CXXFLAGS_EXAMPLE = -Wall -Iinclude -Ihdr
+LDFLAGS_EXAMPLE  = $(LDFLAGS) -L$(DIR_LIB_STATIC) -leasy-gettext
+
 
 EXCLUDE_EQUALS_PATH=$(sort $(abspath $(dir $(1))))
 # For library only
 DIRS_SHARED = $(call EXCLUDE_EQUALS_PATH, $(PJ_OBJ_SHARED_WPATH) $(PJ_LIB_SHARED_WPATH))
 DIRS_STATIC = $(call EXCLUDE_EQUALS_PATH, $(PJ_OBJ_STATIC_WPATH) $(PJ_LIB_STATIC_WPATH))
+DIRS_EXAMPLE= $(call EXCLUDE_EQUALS_PATH, $(PJ_OBJ_EXAMPLE_WPATH) $(PJ_EXAMPLE_WPATH))
 
-DIRS_ALL=$(call EXCLUDE_EQUALS_PATH, $(addsuffix /.dummy,$(DIRS_SHARED) $(DIRS_STATIC)))
+DIRS_ALL=$(call EXCLUDE_EQUALS_PATH, $(addsuffix /.dummy,$(DIRS_SHARED) $(DIRS_STATIC) $(DIRS_EXAMPLE)))
 
-CCFLAGS_STATIC = $(CCFLAGS)
-CXXFLAGS_STATIC = $(CXXFLAGS)
-
-LDFLAGS_STATIC =rcs

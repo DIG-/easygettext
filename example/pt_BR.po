@@ -1,0 +1,48 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: EasyGettext Example\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-04 20:21-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Gustavo de Oliveira Silva (DIG) <diguser@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
+
+#: \cpp\tests\easy-gettext\src\example.c:29
+#, c-format
+msgid "This is a simple EasyGettext example\n"
+msgstr "Este é um simples exemplo do EasyGettext\n"
+
+#: \cpp\tests\easy-gettext\src\example.c:30
+#, c-format
+msgid ""
+"Hi I'm %s.\n"
+"Nice to meet you.\n"
+msgstr "Olá, eu sou %s.\nPrazer em conhecê-lo.\n"
+
+#: \cpp\tests\easy-gettext\src\example.c:31
+#, c-format
+msgid "I present you the file \"%s\" with some examples.\n"
+msgstr "Apresento-lhe o arquivo \"%s\" com alguns exemplo.\n"
+
+#: \cpp\tests\easy-gettext\src\example.c:32
+#, c-format
+msgid ""
+"With this example you will be able to understand how to use gettext\n"
+"and how to use this library.\n"
+msgstr "Com estes exemplos você será capaz de entender como utilizar o gettext\ne como utilizar esta biblioteca.\n"
+
+#: \cpp\tests\easy-gettext\src\example.c:33
+#, c-format
+msgid "This file has %d line."
+msgid_plural "This file has %d lines."
+msgstr[0] "Este arquivo possui %d linha."
+msgstr[1] "Este arquivo possui %d linhas."

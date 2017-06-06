@@ -1,7 +1,9 @@
 #ifndef _EASY_GETTEXT_
 #define _EASY_GETTEXT_ 1
 
+#ifndef _EASY_GETTEXT_COMPILE_TIME_
 #include "easy-gettext-struct.h"
+#endif
 #include <stdint.h>
 
 /**
@@ -39,9 +41,11 @@ _EAG_PUB_ int   EasyGettext_setlocale(EasyGettext*,const char* locale,const char
 _EAG_PUB_ const char* EasyGettext_gettext(EasyGettext*,const char*);
 _EAG_PUB_ const char* EasyGettext_ngettext(EasyGettext*,const char*,const char*,const uint64_t);
 
-const int EasyGettext_OK = 0;
-const int EasyGettext_MALLOC_FAILED = -1;
-const int EasyGettext_INVALID_LOCALE = -2;
+static const int EasyGettext_OK = 0;
+static const int EasyGettext_MALLOC_FAILED = -1;
+static const int EasyGettext_INVALID_LOCALE = -2;
+static const int EasyGettext_LOCALE_NOT_FOUND = -3;
+static const int EasyGettext_ERROR_WHILE_READING_TRANSLATION_FILE = -4;
 
 #ifdef __cplusplus
 }
@@ -63,7 +67,7 @@ const int EasyGettext_INVALID_LOCALE = -2;
   #define EG_(A) EasyGettext_gettext(&EasyGettext_default,A)
   #define EG_N(A,B,C) EasyGettext_ngettext(&EasyGettext_default,A,B,C)
   #define EG_init(A,B) EasyGettext_init(&EasyGettext_default,A,B)
-  #define EG_free EasyGettext_free(&EasyGettext_default)
+  #define EG_free() EasyGettext_free(&EasyGettext_default)
 
 #endif
 
