@@ -1,4 +1,5 @@
 #EasyGettext
+
 [![Build Status](https://travis-ci.org/DIG-/easygettext.svg?branch=master)](https://travis-ci.org/DIG-/easygettext)
 [![license](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/DIG-/easygettext)
 
@@ -49,7 +50,7 @@ src/easy-plural.c
 And enable these macros:
 ```C
 #define _EASY_GETTEXT_COMPILE_TIME_ 1  	// Mandatory
-#define EASY_GETTEXT_STATIC 1 			// To create static version
+#define EASY_GETTEXT_STATIC 1           // To create static version
 ```
 
 ### How to import and use EasyGettext
