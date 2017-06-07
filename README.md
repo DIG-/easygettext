@@ -1,4 +1,4 @@
-#EasyGettext
+# EasyGettext
 
 [![Build Status](https://travis-ci.org/DIG-/easygettext.svg?branch=master)](https://travis-ci.org/DIG-/easygettext)
 [![license](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](https://github.com/DIG-/easygettext)
