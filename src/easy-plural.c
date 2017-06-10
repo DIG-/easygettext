@@ -20,6 +20,7 @@
 #include <string.h>
 #include "easy-gettext-struct-internal.h"
 #include "easy-plural.h"
+#include "easy-plural-list.h"
 #include "easy-gettext.h"
 
 
@@ -53,7 +54,8 @@ enum {
   LOG_IF,   // Logical if   X ? Y : Z
 };
 
-EGP_Node* createNode(){
+#ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+EGP_Node* _EasyGettext_createNode(){
   EGP_Node* tmp = malloc(sizeof(EGP_Node));
   if(tmp != NULL){
     tmp->type=OP_NONE;
@@ -64,8 +66,9 @@ EGP_Node* createNode(){
   }
   return tmp;
 }
+#endif
 
-uint8_t ctoi(const char c){
+uint8_t _EasyGettext_ctoi(const char c){
   switch(c){
     case '0': return 0;
     case '1': return 1;
@@ -81,6 +84,7 @@ uint8_t ctoi(const char c){
   return 0;
 }
 
+#ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
 uint32_t typeFrom(const char* str){
   if(*str == '+'){
     return OP_ADD;
@@ -115,20 +119,24 @@ uint32_t typeFrom(const char* str){
   }
   return OP_NONE;
 }
-
-#ifdef DEBUG_MODE
-void recursivePrint(EGP_Node*);
 #endif
 
-int parsePlural(char* str,EGP_Node** out){
+#ifdef DEBUG_MODE
+#ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+void _EasyGettext_recursivePrint(EGP_Node*);
+#endif
+#endif
+
+#ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+int _EasyGettext_parsePluralToEval(char* str,EGP_Node** out){
   EGP_Node* base = NULL;
-  EGP_Node* actual = createNode();
+  EGP_Node* actual = _EasyGettext_createNode();
   if(actual == NULL)
     return -1;
   base = actual;
 
 #define CREATE_TMP \
-EGP_Node* tmp = createNode();\
+EGP_Node* tmp = _EasyGettext_createNode();\
 if(tmp == NULL){\
   /* TODO: Destroy all */\
   return -1;\
@@ -209,15 +217,15 @@ actual = tmp;
       // When find constant
       if(actual->type == OP_NONE){
         actual->type = VAL_C;
-        actual->value = ctoi(*str);
+        actual->value = _EasyGettext_ctoi(*str);
         continue;
       }else if(actual->type == VAL_C){
-        actual->value = (10*(actual->value))+ctoi(*str);
+        actual->value = (10*(actual->value))+_EasyGettext_ctoi(*str);
         continue;
       }else{
         CREATE_TMP;
         tmp->type = VAL_C;
-        tmp->value = ctoi(*str);
+        tmp->value = _EasyGettext_ctoi(*str);
         INSERT_CONST;
         continue;
       }
@@ -345,13 +353,14 @@ actual = tmp;
   
   #ifdef DEBUG_MODE
   printf("Debugging expression...\n");
-  recursivePrint(base);
+  _EasyGettext_recursivePrint(base);
   printf("\n\n");
   #endif
   
   *out = base;
   return 0;
 }
+#endif
 
 int EasyGettext_parsePlural(EasyGettext* a,const char* locale){
   DBG("parsePlural start.\n");
@@ -362,6 +371,7 @@ int EasyGettext_parsePlural(EasyGettext* a,const char* locale){
   a->plural = malloc(sizeof(EasyGettext_Plural));
   if(a->plural == NULL)
     return EasyGettext_MALLOC_FAILED;
+  a->plural->type = 0;
   
   DBG("Get first translation string.\n");
   char* str = &(a->content[a->translation[0].offset]);
@@ -393,7 +403,7 @@ int EasyGettext_parsePlural(EasyGettext* a,const char* locale){
     if((plu[0] == ';')||(plu[0] == '\0')){
       break;
     }
-    a->plural->total = (10*(a->plural->total))+ctoi(*plu);
+    a->plural->total = (10*(a->plural->total))+_EasyGettext_ctoi(*plu);
     plu++;
   }
   DBG("Found nplurals. Value = %d\n",a->plural->total);
@@ -433,16 +443,27 @@ int EasyGettext_parsePlural(EasyGettext* a,const char* locale){
     tmp[i++] = *str;
   }
   DBG("Copied.. \"%s\"\n",tmp);
-  DBG("Start parsing string\n");
-  parsePlural(tmp,&(a->plural->expression));
-  DBG("done");
+  DBG("Parse plural with internal defines.\n");
+  a->plural->type = EasyGettext_pluralListDecode(tmp);
+  if(a->plural->type == 0){
+    #ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+    DBG("Start parsing string\n");
+    _EasyGettext_parsePluralToEval(tmp,&(a->plural->expression));
+    #else
+    DBG("Plural eval was not enabled at compilation.\n");
+    #endif
+  }else{
+    DBG("Using internal defines for plural expression.\n");
+  }
+  DBG("done\n");
   return 0;
 }
 
-int recursiveEval(const EGP_Node* node, const uint32_t n){
-  #define re_L recursiveEval(node->left,n)
-  #define re_R recursiveEval(node->right,n)
-  #define re_M recursiveEval(node->middle,n)
+#ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+int _EasyGettext_recursiveEval(const EGP_Node* node, const uint32_t n){
+  #define re_L _EasyGettext_recursiveEval(node->left,n)
+  #define re_R _EasyGettext_recursiveEval(node->right,n)
+  #define re_M _EasyGettext_recursiveEval(node->middle,n)
   switch(node->type){
     default:
       return 0;
@@ -467,17 +488,31 @@ int recursiveEval(const EGP_Node* node, const uint32_t n){
     case LOG_IF:  return (re_L?re_M:re_R);
   }
   return 0;
+  #undef re_L
+  #undef re_R
+  #undef re_M
 }
+#endif
 
 int EasyGettext_evalPlural(EasyGettext* a,const uint32_t n){
   if(a == NULL)
     return 0;
   if(a->plural == NULL)
     return 0;
-  if(a->plural->expression == NULL)
+  int e = 0;
+  if(a->plural->type != 0){
+    e = EasyGettext_pluralListEval(a->plural->type,n);
+  }else{
+    #ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+    if(a->plural->expression == NULL)
+      return 0;
+    e = _EasyGettext_recursiveEval(a->plural->expression,n);
+    DBG("_EasyGettext_recursiveEval = %d\n",e);
+    #else
     return 0;
-  int e = recursiveEval(a->plural->expression,n);
-  DBG("recursiveEval = %d\n",e);
+    #endif
+  }
+  
   if(e > a->plural->total)
     e = 0;
   if(e < 0){
@@ -489,7 +524,8 @@ int EasyGettext_evalPlural(EasyGettext* a,const uint32_t n){
 
 // For debug purpose only
 #ifdef DEBUG_MODE
-void recursivePrint(EGP_Node* n){
+#ifdef EASYGETTEXT_ENABLE_PLURAL_EVAL
+void _EasyGettext_recursivePrint(EGP_Node* n){
   //DBG("\n[]%d\n",n->type);
   if(n->type == VAL_C){
     printf("%d",n->value);
@@ -502,7 +538,7 @@ void recursivePrint(EGP_Node* n){
   if(n->type == OP_PAR){
     printf("(");
   }
-  recursivePrint(n->left);
+  _EasyGettext_recursivePrint(n->left);
   switch(n->type){
     case CMP_EQ: printf("=="); break;
     case CMP_NE: printf("!="); break;
@@ -523,9 +559,10 @@ void recursivePrint(EGP_Node* n){
     case OP_PAR: printf(")"); return;
   }
   if(n->type == LOG_IF){
-    recursivePrint(n->middle);
+    _EasyGettext_recursivePrint(n->middle);
     printf(":");
   }
-  recursivePrint(n->right);
+  _EasyGettext_recursivePrint(n->right);
 }
+#endif
 #endif

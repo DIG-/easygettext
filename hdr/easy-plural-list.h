@@ -15,19 +15,12 @@
  **
  */
 
-#ifndef EASY_GETTEXT_VERSION
+#ifndef _EASY_GETTEXT_PLURAL_LIST_
+#define _EASY_GETTEXT_PLURAL_LIST_ 1
 
-#define EASY_GETTEXT_VERSION_MAJOR 0
-#define EASY_GETTEXT_VERSION_MINOR 2
-#define EASY_GETTEXT_VERSION_REV 1
+#include <stdint.h>
 
-#define EASY_GETTEXT_str(a) #a
-#define EASY_GETTEXT_xstr(a) EASY_GETTEXT_str(a)
-
-#ifdef UNICODE_SUPPORT
-#define EASY_GETTEXT_VERSION EASY_GETTEXT_xstr(EASY_GETTEXT_VERSION_MAJOR) "." EASY_GETTEXT_xstr(EASY_GETTEXT_VERSION_MINOR) "." EASY_GETTEXT_xstr(EASY_GETTEXT_VERSION_REV) "u"
-#else
-#define EASY_GETTEXT_VERSION EASY_GETTEXT_xstr(EASY_GETTEXT_VERSION_MAJOR) "." EASY_GETTEXT_xstr(EASY_GETTEXT_VERSION_MINOR) "." EASY_GETTEXT_xstr(EASY_GETTEXT_VERSION_REV)
-#endif
+uint32_t EasyGettext_pluralListDecode(const char*);
+int EasyGettext_pluralListEval(const uint32_t,const uint32_t);    // Struct with translations imported, and locale for future update. Return error code.
 
 #endif

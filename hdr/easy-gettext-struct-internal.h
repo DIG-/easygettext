@@ -33,6 +33,7 @@ typedef struct EGP_Node {
 typedef struct {
   uint8_t total;
   EGP_Node* expression;
+  uint32_t type;
 } EasyGettext_Plural;
 
 typedef struct __attribute__((packed, aligned(4))) {

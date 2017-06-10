@@ -1,5 +1,5 @@
 PROJECT_NAME=easy-gettext
-PROJECT_SRC =easy-gettext.c easy-plural.c
+PROJECT_SRC =easy-gettext.c easy-plural.c easy-plural-list.c
 PROJECT_EXAMPLE=example.c
 
 -include inc.mak
